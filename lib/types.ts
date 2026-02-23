@@ -66,7 +66,7 @@ export interface Booking {
   budget?: string;
   timeline?: string;
   additional_notes?: string;
-  status: 'pending' | 'contacted' | 'in-progress' | 'completed';
+  status: "pending" | "contacted" | "in-progress" | "completed";
   whatsapp_sent: boolean;
   email_sent: boolean;
   created_at: string;
@@ -77,5 +77,17 @@ export interface Settings {
   id: string;
   key: string;
   value: string;
+  updated_at: string;
+}
+
+export interface TeamMember {
+  id: string;
+  name: string;
+  title: string;
+  role?: string;
+  bio?: string;
+  image_url?: string;
+  order_index: number;
+  created_at: string;
   updated_at: string;
 }

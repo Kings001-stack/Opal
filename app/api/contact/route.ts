@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
           project_type: "General Inquiry",
           project_description: message,
           status: "pending",
-        },
+      },
       ])
       .select()
       .single();

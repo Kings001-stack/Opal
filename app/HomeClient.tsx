@@ -13,12 +13,14 @@ interface HomeClientProps {
   initialProjects: Project[]
   initialTestimonials: Testimonial[]
   initialServices: Service[]
+  settings?: Record<string, string>
 }
 
 export default function HomeClient({
   initialProjects,
   initialTestimonials,
-  initialServices
+  initialServices,
+  settings
 }: HomeClientProps) {
   const [currentTestimonial, setCurrentTestimonial] = useState(0)
   const [isAutoplay, setIsAutoplay] = useState(true)
@@ -123,16 +125,16 @@ export default function HomeClient({
               {/* Floating Cards - Premium Layout */}
               <div className="relative w-full h-full perspective-1000">
                 <div className="absolute top-[5%] left-[10%] w-[280px] h-[380px] rounded-3xl overflow-hidden border border-white/10 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.7)] animate-float z-20">
-                  <img src="/mobile-app-dashboard.png" alt="" className="w-full h-full object-cover" />
+                  <img src={settings?.hero_image_1 || "/mobile-app-dashboard.png"} alt="" className="w-full h-full object-cover" />
                 </div>
                 <div className="absolute top-[20%] right-[0%] w-[320px] h-[420px] rounded-3xl overflow-hidden border border-white/10 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.7)] animate-float z-10" style={{ animationDelay: "1.5s" }}>
-                  <img src="/mobile-app-ui.png" alt="" className="w-full h-full object-cover" />
+                  <img src={settings?.hero_image_2 || "/mobile-app-ui.png"} alt="" className="w-full h-full object-cover" />
                 </div>
                 <div className="absolute bottom-[5%] left-[0%] w-[300px] h-[400px] rounded-3xl overflow-hidden border border-white/10 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.7)] animate-float z-30" style={{ animationDelay: "3s" }}>
-                  <img src="/web-dashboard.jpg" alt="" className="w-full h-full object-cover" />
+                  <img src={settings?.hero_image_3 || "/web-dashboard.jpg"} alt="" className="w-full h-full object-cover" />
                 </div>
                 <div className="absolute bottom-[10%] right-[10%] w-[260px] h-[340px] rounded-3xl overflow-hidden border border-white/10 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.7)] animate-float z-20" style={{ animationDelay: "0.8s" }}>
-                  <img src="/small-phone-ui.jpg" alt="" className="w-full h-full object-cover" />
+                  <img src={settings?.hero_image_4 || "/small-phone-ui.jpg"} alt="" className="w-full h-full object-cover" />
                 </div>
               </div>
             </div>
@@ -379,7 +381,7 @@ export default function HomeClient({
                 <span className="gradient-text">Next Revolution</span>
               </h2>
               <p className="text-gray-400 text-xl mb-12 max-w-2xl mx-auto font-light leading-relaxed">
-                Connect with Aisha's elite design team and transform your brand
+                Connect with Opal's elite design team and transform your brand
                 into a digital masterpiece that scales beyond limits.
               </p>
 

@@ -26,11 +26,19 @@ export default async function HomePage() {
     .order("order_index", { ascending: true })
     .limit(3);
 
+  // Fetch Settings
+  const { data: settingsData } = await supabase.from("settings").select("*");
+  const settings = (settingsData || []).reduce((acc: Record<string, string>, item: any) => {
+    acc[item.key] = item.value;
+    return acc;
+  }, {});
+
   return (
     <HomeClient
       initialProjects={(projects as Project[]) || []}
       initialTestimonials={(testimonials as Testimonial[]) || []}
       initialServices={(services as Service[]) || []}
+      settings={settings}
     />
   );
 }

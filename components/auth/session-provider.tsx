@@ -19,44 +19,41 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
-  const supabase = createClient();
 
   useEffect(() => {
-    // Get initial session
-    const getInitialSession = async () => {
+    const supabase = createClient();
+
+    // Load initial session from cookies
+    const loadSession = async () => {
       try {
-        const {
-          data: { session },
-        } = await supabase.auth.getSession();
+        const { data: { session } } = await supabase.auth.getSession();
         setUser(session?.user ?? null);
-      } catch (error) {
-        console.warn("[SessionProvider] Initial session error:", error);
+      } catch {
         setUser(null);
       } finally {
         setLoading(false);
       }
     };
 
-    getInitialSession();
+    loadSession();
 
-    // Listen for auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log("[SessionProvider] Auth state changed:", event);
-      setUser(session?.user ?? null);
-      setLoading(false);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        if (event === "SIGNED_OUT") {
+          setUser(null);
+          setLoading(false);
+          router.push("/admin/login");
+          return;
+        }
 
-      // Refresh the page to update server-side state
-      if (event === "SIGNED_IN" || event === "SIGNED_OUT") {
-        router.refresh();
+        setUser(session?.user ?? null);
+        setLoading(false);
       }
-    });
+    );
 
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [router, supabase.auth]);
+    return () => subscription.unsubscribe();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <SessionContext.Provider value={{ user, loading }}>

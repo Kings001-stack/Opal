@@ -60,13 +60,21 @@ export default function AdminLoginPage() {
     const emailErr = validateEmail(email);
     const passwordErr = validatePassword(password);
 
-    if (emailErr || passwordErr) {
-      setEmailError(emailErr);
-      setPasswordError(passwordErr);
-      return;
+    const supabase = createClient();
+
+    // Clear potentially conflicting cookies from other projects
+    if (typeof window !== "undefined") {
+      const cookies = document.cookie.split(";");
+      const currentProjectId = process.env.NEXT_PUBLIC_SUPABASE_URL?.split(".")[0].split("//")[1];
+
+      cookies.forEach(cookie => {
+        const name = cookie.split("=")[0].trim();
+        if (name.startsWith("sb-") && !name.includes(currentProjectId || "")) {
+          document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+        }
+      });
     }
 
-    const supabase = createClient();
     setIsLoading(true);
     setError(null);
 
@@ -91,15 +99,10 @@ export default function AdminLoginPage() {
         throw new Error("You do not have admin access");
       }
 
-      // Force a page refresh to update server-side session
+      // Force a full page load to ensure all cookies are synchronized
       window.location.href = "/admin/dashboard";
-    } catch (error: unknown) {
-      const errorMessage =
-        error instanceof Error
-          ? error.message
-          : "Failed to connect to server. Please ensure the database is set up first.";
-      setError(errorMessage);
-      console.log("[v0] Login error:", errorMessage);
+    } catch (error: any) {
+      setError(error.message || "An unexpected error occurred");
     } finally {
       setIsLoading(false);
     }
@@ -157,9 +160,8 @@ export default function AdminLoginPage() {
                   placeholder="admin@opal.com"
                   value={email}
                   onChange={handleEmailChange}
-                  className={`pl-12 h-12 bg-white/5 border-white/10 text-white placeholder-gray-600 focus:border-[#E91E8C]/50 ${
-                    emailError ? "border-red-500/50" : ""
-                  }`}
+                  className={`pl-12 h-12 bg-white/5 border-white/10 text-white placeholder-gray-600 focus:border-[#E91E8C]/50 ${emailError ? "border-red-500/50" : ""
+                    }`}
                 />
               </div>
               {emailError && (
@@ -189,9 +191,8 @@ export default function AdminLoginPage() {
                   placeholder="Enter your password"
                   value={password}
                   onChange={handlePasswordChange}
-                  className={`pl-12 pr-12 h-12 bg-white/5 border-white/10 text-white placeholder-gray-600 focus:border-[#E91E8C]/50 ${
-                    passwordError ? "border-red-500/50" : ""
-                  }`}
+                  className={`pl-12 pr-12 h-12 bg-white/5 border-white/10 text-white placeholder-gray-600 focus:border-[#E91E8C]/50 ${passwordError ? "border-red-500/50" : ""
+                    }`}
                 />
                 <button
                   type="button"

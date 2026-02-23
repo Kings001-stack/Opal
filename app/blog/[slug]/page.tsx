@@ -91,10 +91,10 @@ export default async function BlogPostPage({
           <div className="flex items-center justify-between pt-8 border-t border-white/10">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center p-0.5">
-                <img src="/aisha-portrait.jpg" alt="Aisha" className="w-full h-full rounded-full object-cover border border-black" />
+                <img src="/aisha-portrait.jpg" alt="Opal" className="w-full h-full rounded-full object-cover border border-black" />
               </div>
               <div>
-                <p className="font-medium text-white">Aisha</p>
+                <p className="font-medium text-white">Opal</p>
                 <p className="text-gray-500 text-sm">Founder & Creative Director</p>
               </div>
             </div>
@@ -186,10 +186,10 @@ export default async function BlogPostPage({
                 <h4 className="text-sm font-bold uppercase tracking-widest text-[#E91E8C] mb-4">About the Author</h4>
                 <div className="flex items-center gap-4 mb-4">
                   <div className="w-14 h-14 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center p-0.5">
-                    <img src="/aisha-portrait.jpg" alt="Aisha" className="w-full h-full rounded-full object-cover border-2 border-black" />
+                    <img src="/aisha-portrait.jpg" alt="Opal" className="w-full h-full rounded-full object-cover border-2 border-black" />
                   </div>
                   <div>
-                    <h5 className="font-bold text-white">Aisha</h5>
+                    <h5 className="font-bold text-white">Opal</h5>
                     <p className="text-gray-500 text-xs uppercase tracking-wider">Creative Director</p>
                   </div>
                 </div>

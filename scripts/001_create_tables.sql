@@ -1,9 +1,10 @@
 -- Admin Users Table (for CMS access)
+-- Roles: 'super_admin' (can manage other admins) or 'admin' (regular admin access)
 CREATE TABLE IF NOT EXISTS public.admins (
   id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   first_name TEXT,
   last_name TEXT,
-  role TEXT DEFAULT 'admin',
+  role TEXT DEFAULT 'admin' CHECK (role IN ('admin', 'super_admin')),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -101,8 +102,16 @@ CREATE POLICY "Admins can view all admins" ON public.admins FOR SELECT USING (
   auth.uid() IN (SELECT id FROM public.admins)
 );
 
-CREATE POLICY "Admins can update admin profiles" ON public.admins FOR UPDATE USING (
-  auth.uid() IN (SELECT id FROM public.admins)
+CREATE POLICY "Admins can update their own profile" ON public.admins FOR UPDATE USING (
+  auth.uid() = id
+);
+
+CREATE POLICY "Only super admins can insert new admins" ON public.admins FOR INSERT WITH CHECK (
+  auth.uid() IN (SELECT id FROM public.admins WHERE role = 'super_admin')
+);
+
+CREATE POLICY "Only super admins can delete admins" ON public.admins FOR DELETE USING (
+  auth.uid() IN (SELECT id FROM public.admins WHERE role = 'super_admin')
 );
 
 -- RLS Policies for services (public can view, only admins can modify)

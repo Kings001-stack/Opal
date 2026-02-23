@@ -6,9 +6,15 @@
 -- 3. Copy the ID
 -- 4. Replace 'YOUR_USER_ID_HERE' in the query below with your actual user ID
 
+-- Create a SUPER ADMIN (can manage other admins)
 INSERT INTO public.admins (id, first_name, last_name, role)
-VALUES ('YOUR_USER_ID_HERE', 'Admin', 'User', 'admin')
+VALUES ('YOUR_USER_ID_HERE', 'Admin', 'User', 'super_admin')
 ON CONFLICT (id) DO NOTHING;
+
+-- OR create a regular ADMIN (cannot manage other admins)
+-- INSERT INTO public.admins (id, first_name, last_name, role)
+-- VALUES ('YOUR_USER_ID_HERE', 'Admin', 'User', 'admin')
+-- ON CONFLICT (id) DO NOTHING;
 
 -- Verify the admin was created:
 SELECT * FROM public.admins;

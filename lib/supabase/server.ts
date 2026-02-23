@@ -1,7 +1,9 @@
 import { createServerClient } from "@supabase/ssr";
-import { cookies } from "next/headers";
-import { cache } from "react";
+import { cookies, headers } from "next/headers";
 
+/**
+ * createClient() returns a Supabase client for Server Components.
+ */
 export async function createClient() {
   const cookieStore = await cookies();
 
@@ -10,59 +12,57 @@ export async function createClient() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        getAll() {
-          return cookieStore.getAll();
-        },
-        setAll(cookiesToSet) {
-          try {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options),
-            );
-          } catch {
-            // The `setAll` method was called from a Server Component.
-            // This can be ignored if you have middleware refreshing user sessions.
-          }
-        },
+        getAll: () => cookieStore.getAll(),
+        setAll: () => { }, // Safe: RSCs are read-only
       },
-    },
+      auth: {
+        autoRefreshToken: false, // Priority: Proxy handles this
+        persistSession: true,
+      }
+    }
   );
 }
 
 /**
- * Standard getUser function, cached per request to prevent race conditions.
- * This is the magic bullet for "Refresh Token Already Used".
+ * getUser() - Navigation-Safe Auth Check.
+ * Prioritizes headers from Proxy, falls back to passive session.
  */
-export const getUser = cache(async () => {
-  const supabase = await createClient();
+export async function getUser() {
   try {
-    // First try to get the session (more reliable for SSR)
-    const {
-      data: { session },
-      error: sessionError,
-    } = await supabase.auth.getSession();
+    const headerList = await headers();
+    const userId = headerList.get("x-user-id");
 
-    if (sessionError) {
-      console.warn("[getUser] Session error:", sessionError);
-      return null;
+    // FAST PATH: Return user immediately if Proxy already validated them.
+    if (userId) {
+      return {
+        id: userId,
+        email: headerList.get("x-user-email")
+      } as any;
     }
 
-    if (session?.user) {
-      return session.user;
-    }
+    // SLOW PATH: First time load or Proxy header loss recovery.
+    const supabase = await createClient();
+    const { data: { session } } = await supabase.auth.getSession();
 
-    // Fallback to getUser if no session
-    const {
-      data: { user },
-      error: userError,
-    } = await supabase.auth.getUser();
-    if (userError) {
-      console.warn("[getUser] User error:", userError);
-      return null;
-    }
-
-    return user;
-  } catch (error) {
-    console.warn("[getUser] Auth check failed:", error);
+    return session?.user ?? null;
+  } catch (err) {
+    console.error("[getUser] System-wide auth error during navigation.");
     return null;
   }
-});
+}
+
+export async function createAdminClient() {
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!serviceRoleKey) return createClient();
+
+  return createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    serviceRoleKey,
+    {
+      cookies: {
+        getAll: () => [],
+        setAll: () => { },
+      },
+    }
+  );
+}

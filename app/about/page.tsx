@@ -66,7 +66,7 @@ export default function AboutPage() {
 
   const team = [
     {
-      name: "Aisha",
+      name: "Opal",
       role: "Founder & Creative Director",
       image: "/aisha-portrait.jpg",
       description: "Visionary leader with a passion for creating digital products that solve real-world problems through exceptional design.",
@@ -114,7 +114,7 @@ export default function AboutPage() {
             </h1>
 
             <p className="text-gray-400 text-lg max-w-2xl mx-auto leading-relaxed mb-10">
-              Founded by Aisha, we are a premier digital design agency dedicated to
+              Founded by Opal, we are a premier digital design agency dedicated to
               crafted exceptional digital experiences that transform modern brands and drive
               measurable success across the globe.
             </p>

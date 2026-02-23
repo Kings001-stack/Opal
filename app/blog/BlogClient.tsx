@@ -209,7 +209,7 @@ export default function BlogClient({ posts }: { posts: BlogPost[] }) {
                                                     <div className="w-6 h-6 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center p-0.5">
                                                         <img src="/aisha-portrait.jpg" className="w-full h-full rounded-full object-cover" />
                                                     </div>
-                                                    <span className="text-xs text-gray-400">Aisha</span>
+                                                    <span className="text-xs text-gray-400">Opal</span>
                                                 </div>
                                                 <ArrowRight size={16} className="text-gray-600 group-hover:text-[#E91E8C] group-hover:translate-x-1 transition-all" />
                                             </div>

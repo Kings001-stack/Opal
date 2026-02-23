@@ -26,7 +26,7 @@ export default async function AdminDashboard() {
 
   const { data: adminData } = await supabase
     .from("admins")
-    .select("first_name")
+    .select("first_name, role")
     .eq("id", user?.id)
     .single();
 
@@ -85,15 +85,23 @@ export default async function AdminDashboard() {
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
         <div>
-          <div className="flex items-center gap-2 text-gray-500 text-sm font-medium mb-3">
-            <LayoutDashboard size={14} className="text-[#E91E8C]" />
-            <span className="uppercase tracking-widest text-xs">Admin Dashboard</span>
+          <div className="flex flex-wrap items-center gap-3 mb-3">
+            <div className="flex items-center gap-2 text-gray-500 text-sm font-medium">
+              <LayoutDashboard size={14} className="text-[#E91E8C]" />
+              <span className="uppercase tracking-widest text-xs">Admin Dashboard</span>
+            </div>
+            <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10">
+              <div className={`w-1.5 h-1.5 rounded-full ${adminData?.role === 'super_admin' ? 'bg-[#E91E8C] animate-pulse' : 'bg-blue-500'}`} />
+              <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
+                {adminData?.role === 'super_admin' ? 'Super Admin' : 'Administrator'}
+              </span>
+            </div>
           </div>
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
-            Welcome back, <span className="gradient-text">{adminData?.first_name || "Aisha"}</span>!
+            Welcome back, <span className="gradient-text">{adminData?.first_name || "Opal"}</span>!
           </h1>
           <p className="text-gray-400 mt-2 text-lg">
-            Manage your agency and keep track of your growth.
+            Manage your agency as <span className="text-white font-medium">{user?.email}</span>
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -244,7 +252,9 @@ export default async function AdminDashboard() {
                   <div className="w-2 h-2 rounded-full bg-purple-500" />
                   <span className="text-sm text-gray-400">Admin Level</span>
                 </div>
-                <span className="text-xs font-bold text-gray-300 uppercase tracking-widest">Super Admin</span>
+                <span className="text-xs font-bold text-gray-300 uppercase tracking-widest">
+                  {adminData?.role === 'super_admin' ? 'Super Admin' : 'Administrator'}
+                </span>
               </div>
               <div className="pt-4 border-t border-white/5">
                 <p className="text-xs text-center text-gray-600">
@@ -263,8 +273,10 @@ export default async function AdminDashboard() {
                 </div>
               </div>
               <div>
-                <h3 className="font-bold text-white text-lg">{adminData?.first_name || "Aisha"}</h3>
-                <p className="text-[#E91E8C] text-xs font-bold uppercase tracking-wider">Agency Founder</p>
+                <h3 className="font-bold text-white text-lg">{adminData?.first_name || "Opal"}</h3>
+                <p className="text-[#E91E8C] text-xs font-bold uppercase tracking-wider">
+                  {adminData?.role === 'super_admin' ? 'Agency Founder' : 'Team Member'}
+                </p>
               </div>
             </div>
             <div className="space-y-4">

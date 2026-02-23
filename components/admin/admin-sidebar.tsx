@@ -9,6 +9,7 @@ import {
     MessageSquare,
     Calendar,
     Home,
+    ShieldCheck,
     LogOut,
     LayoutDashboard,
     Settings,
@@ -17,7 +18,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
 
-export function AdminSidebar({ firstName }: { firstName: string }) {
+export function AdminSidebar({ firstName, email, role }: { firstName: string, email?: string, role?: string }) {
     const pathname = usePathname();
     const router = useRouter();
     const supabase = createClient();
@@ -25,8 +26,9 @@ export function AdminSidebar({ firstName }: { firstName: string }) {
     const handleLogout = async () => {
         await supabase.auth.signOut();
         router.push("/admin/login");
-        router.refresh();
     };
+
+    const isSuperAdmin = role === "super_admin";
 
     const navItems = [
         { href: "/admin/dashboard", icon: LayoutDashboard, label: "Overview" },
@@ -35,6 +37,10 @@ export function AdminSidebar({ firstName }: { firstName: string }) {
         { href: "/admin/blog", icon: FileText, label: "Blog Posts" },
         { href: "/admin/testimonials", icon: MessageSquare, label: "Testimonials" },
         { href: "/admin/bookings", icon: Calendar, label: "Bookings" },
+        ...(isSuperAdmin ? [
+            { href: "/admin/admins", icon: ShieldCheck, label: "Admins" },
+            { href: "/admin/settings", icon: Settings, label: "Site Settings" }
+        ] : []),
     ];
 
     return (
@@ -51,10 +57,16 @@ export function AdminSidebar({ firstName }: { firstName: string }) {
                 </Link>
             </div>
 
-            <div className="p-4 mt-2">
+            <div className="flex-1 overflow-y-auto p-4 mt-2 custom-scrollbar">
                 <div className="px-4 py-3 rounded-xl bg-white/[0.03] border border-white/5 mb-6">
-                    <p className="text-xs text-gray-500 mb-1">Logged in as</p>
-                    <p className="text-sm font-medium text-white truncate">{firstName}</p>
+                    <div className="flex items-center gap-2 mb-2">
+                        <div className={`w-2 h-2 rounded-full ${isSuperAdmin ? "bg-[#E91E8C]" : "bg-blue-500"}`} />
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500">
+                            {isSuperAdmin ? "Super Admin" : "Administrator"}
+                        </p>
+                    </div>
+                    <p className="text-sm font-bold text-white truncate">{firstName}</p>
+                    <p className="text-[10px] text-gray-500 truncate mt-0.5">{email}</p>
                 </div>
 
                 <nav className="space-y-1">
