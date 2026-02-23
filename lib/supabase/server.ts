@@ -31,22 +31,28 @@ export async function getUser() {
   try {
     const headerList = await headers();
     const userId = headerList.get("x-user-id");
+    const userEmail = headerList.get("x-user-email");
 
-    // FAST PATH: Return user immediately if Proxy already validated them.
+    // FAST PATH: Return user immediately if Proxy/Middleware already validated them.
     if (userId) {
       return {
         id: userId,
-        email: headerList.get("x-user-email")
+        email: userEmail
       } as any;
     }
 
     // SLOW PATH: First time load or Proxy header loss recovery.
+    console.log("[getUser] No x-user-id header found, falling back to getSession()");
     const supabase = await createClient();
-    const { data: { session } } = await supabase.auth.getSession();
+    const { data: { session }, error } = await supabase.auth.getSession();
+
+    if (error) {
+      console.error("[getUser] getSession error:", error.message);
+    }
 
     return session?.user ?? null;
   } catch (err) {
-    console.error("[getUser] System-wide auth error during navigation.");
+    console.error("[getUser] System-wide auth exception:", err);
     return null;
   }
 }
